@@ -17,7 +17,10 @@ func MarshalJson(tests []Test) ([]byte, error) {
     }
 
     formatted := &bytes.Buffer{}
-    _ = json.Indent(formatted, data, "", "    ")
+    err = json.Indent(formatted, data, "", "    ")
+    if err != nil {
+        return nil, err
+    }
 
     return formatted.Bytes(), nil
 }
