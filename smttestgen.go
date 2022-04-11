@@ -9,7 +9,7 @@ import (
 )
 
 func write(fileName string, tests []framework.Test, marshaller framework.Marshaller) {
-    data, err := marshaller.Marshall(tests)
+    data, err := marshaller.Marshal(tests)
     if err != nil {
         panic("Unable to marshall tests!")
     }

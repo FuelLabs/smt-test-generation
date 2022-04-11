@@ -39,7 +39,7 @@ type Marshaller struct {
     Func MarshalFunc
 }
 
-func (m Marshaller) Marshall(tests []Test) ([]byte, error) {
+func (m Marshaller) Marshal(tests []Test) ([]byte, error) {
     return m.Func(tests)
 }
 
