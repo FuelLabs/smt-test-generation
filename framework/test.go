@@ -21,6 +21,10 @@ type Test struct {
 	Steps []Step       `json:"steps"`
 }
 
+func (t Test) GetName() string {
+	return t.Name
+}
+
 func HexValue(data []byte) EncodedValue {
 	return EncodedValue{
 		Value:    hex.EncodeToString(data),
