@@ -38,7 +38,7 @@ func writeIndividual[T Test](folder string, tests []T, marshaller framework.Mars
 			panic("Unable to marshall tests!")
 		}
 
-		fileName := filepath.Join(folder, test.GetName()+".yaml")
+		fileName := filepath.Join(folder, test.GetName()+"."+marshaller.Extension)
 		fmt.Println(fileName)
 		f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 		if err != nil {
@@ -277,5 +277,6 @@ func main() {
 	yamlMarshaller := framework.NewYamlMarshaller[framework.Test]()
 	write("./smt_test_spec.json", tests, jsonMarshaller)
 	write("./smt_test_spec.yaml", tests, yamlMarshaller)
+	writeIndividual("./fixtures", tests, jsonMarshaller)
 	writeIndividual("E:\\fuel\\projects\\fuel-merkle\\tests-data\\fixtures", tests, yamlMarshaller)
 }
