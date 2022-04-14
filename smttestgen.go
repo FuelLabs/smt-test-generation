@@ -2,53 +2,45 @@ package main
 
 import (
 	"encoding/binary"
-	"fmt"
 	"os"
 	"path/filepath"
 
 	"smttestgen/framework"
+	"smttestgen/marshalling"
 	"smttestgen/smtw"
 )
 
-type Test interface {
-	GetName() string
-}
-
-func write[T Test](fileName string, tests []T, marshaller framework.Marshaller[T]) {
-	data, err := marshaller.Marshal(tests...)
-	if err != nil {
-		panic("Unable to marshall tests!")
-	}
-
+func write(fileName string, data []byte) {
 	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		panic("Unable to open file for writing!")
 	}
-
 	_, err = f.Write(data)
 	if err != nil {
 		panic("Unable to write data to file!")
 	}
 }
 
-func writeIndividual[T Test](folder string, tests []T, marshaller framework.Marshaller[T]) {
+type Test interface {
+	GetName() string
+}
+
+func writeCombined[T Test](fileName string, tests []T, marshaller marshalling.Marshaller[T]) {
+	data, err := marshaller.Marshal(tests...)
+	if err != nil {
+		panic("Unable to marshal tests!")
+	}
+	write(fileName, data)
+}
+
+func writeIndividual[T Test](folder string, tests []T, marshaller marshalling.Marshaller[T]) {
 	for _, test := range tests {
 		data, err := marshaller.Marshal(test)
 		if err != nil {
-			panic("Unable to marshall tests!")
+			panic("Unable to marshal tests!")
 		}
-
 		fileName := filepath.Join(folder, test.GetName()+"."+marshaller.Extension)
-		fmt.Println(fileName)
-		f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-		if err != nil {
-			panic("Unable to open file for writing!")
-		}
-
-		_, err = f.Write(data)
-		if err != nil {
-			panic("Unable to write data to file!")
-		}
+		write(fileName, data)
 	}
 }
 
@@ -270,13 +262,15 @@ func populateTests(tests *[]framework.Test) {
 }
 
 func main() {
-	var tests []framework.Test
+	tests := make([]framework.Test, 0)
 	populateTests(&tests)
 
-	jsonMarshaller := framework.NewJsonMarshaller[framework.Test]()
-	yamlMarshaller := framework.NewYamlMarshaller[framework.Test]()
-	write("./smt_test_spec.json", tests, jsonMarshaller)
-	write("./smt_test_spec.yaml", tests, yamlMarshaller)
-	writeIndividual("./fixtures", tests, jsonMarshaller)
+	jsonMarshaller := marshalling.NewJsonMarshaller[framework.Test]()
+	writeCombined("./fixtures/smt_test_spec.json", tests, jsonMarshaller)
+	writeIndividual("./fixtures/json", tests, jsonMarshaller)
+
+	yamlMarshaller := marshalling.NewYamlMarshaller[framework.Test]()
+	writeCombined("./fixtures/smt_test_spec.yaml", tests, yamlMarshaller)
+	writeIndividual("./fixtures/yaml", tests, yamlMarshaller)
 	writeIndividual("E:\\fuel\\projects\\fuel-merkle\\tests-data\\fixtures", tests, yamlMarshaller)
 }
