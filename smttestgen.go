@@ -10,6 +10,10 @@ import (
 	"smttestgen/smtw"
 )
 
+type Test interface {
+	GetName() string
+}
+
 func write(fileName string, data []byte) {
 	f, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
@@ -19,10 +23,6 @@ func write(fileName string, data []byte) {
 	if err != nil {
 		panic("Unable to write data to file!")
 	}
-}
-
-type Test interface {
-	GetName() string
 }
 
 func writeCombined[T Test](fileName string, tests []T, marshaller marshalling.Marshaller[T]) {

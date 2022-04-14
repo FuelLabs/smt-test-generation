@@ -5,15 +5,6 @@ import (
 	"encoding/json"
 )
 
-func formatJson(data []byte) ([]byte, error) {
-	formatted := &bytes.Buffer{}
-	err := json.Indent(formatted, data, "", "    ")
-	if err != nil {
-		return nil, err
-	}
-	return formatted.Bytes(), nil
-}
-
 func marshalJson[T any](ts ...T) ([]byte, error) {
 	if len(ts) == 1 {
 		t := ts[0]
@@ -25,6 +16,15 @@ func marshalJson[T any](ts ...T) ([]byte, error) {
 		}
 		return json.Marshal(combined)
 	}
+}
+
+func formatJson(data []byte) ([]byte, error) {
+	formatted := &bytes.Buffer{}
+	err := json.Indent(formatted, data, "", "    ")
+	if err != nil {
+		return nil, err
+	}
+	return formatted.Bytes(), nil
 }
 
 // MarshalJson is an instance of a MarshalFunc for JSON
