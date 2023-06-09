@@ -57,11 +57,13 @@ func (smtw *SparseMerkleTreeWrapper) Update(key []byte, value []byte) ([]byte, e
 	return smtw.tree.Update(key, value)
 }
 
-func (smtw *SparseMerkleTreeWrapper) Delete(key []byte) ([]byte, error) {
+func (smtw *SparseMerkleTreeWrapper) Delete(key []byte, value []byte) ([]byte, error) {
 	stepKey := framework.HexValue(digest(key))
+	stepData := framework.Utf8Value(value)
 	step := framework.Step{
 		Action: "delete",
 		Key:    &stepKey,
+		Data:   &stepData,
 	}
 	smtw.test.Steps = append(smtw.test.Steps, step)
 	return smtw.tree.Delete(key)

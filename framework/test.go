@@ -12,7 +12,7 @@ type EncodedValue struct {
 type Step struct {
 	Action string        `json:"action"`
 	Key    *EncodedValue `json:"key"`
-	Data   *EncodedValue `json:"data,omitempty"`
+	Data   *EncodedValue `json:"data"`
 }
 
 type Test struct {
